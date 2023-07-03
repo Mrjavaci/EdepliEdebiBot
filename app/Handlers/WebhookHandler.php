@@ -28,7 +28,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         (new $className)
             ->setBot($this->bot)
             ->setChat($this->chat)
-            ->handleCustomCommand($parameter);
+            ->handleCommand($parameter);
     }
 
     protected function listAllCommands(): void
