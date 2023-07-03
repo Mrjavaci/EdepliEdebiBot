@@ -13,16 +13,14 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         $this->handleCustomCommand((string)$text->after('/')->before(' ')->before('@'), (string)$text->after('@')->after(' '));
     }
 
-    /**
-     * @param string
-     * @return void
-     */
+
     public function handleCustomCommand(string $name, $parameter): void
     {
         if (!class_exists(\Illuminate\Support\Str::studly($name . 'Command'))) {
             Log::info('!class_exists');
 
             $this->listAllCommands();
+            return;
         }
         Log::info('class_exists');
         (new $name)->handleCustomCommand($parameter);
@@ -30,7 +28,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     protected function listAllCommands(): void
     {
-        $this->chat->html('<bold>Bahsi Geçen Komut Bulunamamıştır. Örnek komutlar aşağıdadır.</bold>')->send();
+        $this->chat->html('<b>Bahsi Geçen Komut Bulunamamıştır. Örnek komutlar aşağıdadır.</b>')->send();
     }
 
 
