@@ -19,12 +19,11 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         $className = '\\App\\TelegraphCommands\\' . \Illuminate\Support\Str::studly($name . 'Command');
 
         if (!class_exists($className)) {
-            Log::info('!class_exists');
 
             $this->listAllCommands();
             return;
         }
-        Log::info('class_exists');
+
         (new $className)
             ->setBot($this->bot)
             ->setChat($this->chat)
