@@ -16,15 +16,16 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function handleCustomCommand(string $name, $parameter): void
     {
-            Log::info('class name -> ' . \Illuminate\Support\Str::studly($name . 'Command'));
-        if (!class_exists('\\App\\TelegraphCommands\\'.\Illuminate\Support\Str::studly($name . 'Command'))) {
+        $className = '\\App\\TelegraphCommands\\' . \Illuminate\Support\Str::studly($name . 'Command');
+
+        if (!class_exists($className)) {
             Log::info('!class_exists');
 
             $this->listAllCommands();
             return;
         }
         Log::info('class_exists');
-        (new $name)
+        (new $className)
             ->setBot($this->bot)
             ->setChat($this->chat)
             ->handleCustomCommand($parameter);
