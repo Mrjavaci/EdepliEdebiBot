@@ -187,5 +187,6 @@ return [
 
     'poemsJsonFileUrl' => 'https://raw.githubusercontent.com/Mrjavaci/Turkish-Poems/main/PoemsJson.json',
     'songsJsonFileUrl' => 'https://raw.githubusercontent.com/Mrjavaci/kvl-gece-icin-sarkilar/main/gece-icin-sarkilar.json',
+    'wordJsonFileUrl' => 'https://raw.githubusercontent.com/Mrjavaci/nisanyan/data/nisanyan.json'
 
 ];
