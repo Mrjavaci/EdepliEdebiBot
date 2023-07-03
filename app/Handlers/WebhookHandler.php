@@ -14,9 +14,9 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         (new $name)->handleCommand();
     }
 
-    protected function listAllCommands()
+    protected function listAllCommands():void
     {
-        $this->chat->html('<bold>Bahsi Geçen Komut Bulunamamıştır. Örnek komutlar aşağıdadır.</bold>');
+        $this->chat->html('<bold>Bahsi Geçen Komut Bulunamamıştır. Örnek komutlar aşağıdadır.</bold>')->send();
     }
 
     protected function handleUnknownCommand(Stringable $text): void
