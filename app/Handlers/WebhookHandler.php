@@ -16,6 +16,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     public function handleCustomCommand(string $name, $parameter): void
     {
+            Log::info('class name -> ' . \Illuminate\Support\Str::studly($name . 'Command'));
         if (!class_exists(\Illuminate\Support\Str::studly($name . 'Command'))) {
             Log::info('!class_exists');
 
