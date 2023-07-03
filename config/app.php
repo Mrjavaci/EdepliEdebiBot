@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -184,5 +184,8 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
+
+    'poemsJsonFileUrl' => 'https://raw.githubusercontent.com/Mrjavaci/Turkish-Poems/main/PoemsJson.json',
+    'songsJsonFileUrl' => 'https://raw.githubusercontent.com/Mrjavaci/kvl-gece-icin-sarkilar/main/gece-icin-sarkilar.json',
 
 ];
