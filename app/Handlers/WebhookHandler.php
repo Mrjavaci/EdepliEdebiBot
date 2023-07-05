@@ -2,17 +2,22 @@
 
 namespace App\Handlers;
 
+use App\Interfaces\TelegraphCommandInterface;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Stringable;
 
 class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 {
+    public function handleUnknownCommandForTesting(Stringable $text): void
+    {
+        $this->handleUnknownCommand($text);
+    }
+
     protected function handleUnknownCommand(Stringable $text): void
     {
         Log::info('handleUnknownCommand');
         $this->handleCustomCommand((string)$text->after('/')->before(' ')->before('@'), (string)$text->after('@')->after(' '));
     }
-
 
     public function handleCustomCommand(string $name, $parameter): void
     {
@@ -24,10 +29,15 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
             return;
         }
 
-        (new $className)
-            ->setBot($this->bot)
-            ->setChat($this->chat)
-            ->handleCommand($parameter);
+        app()->bind(TelegraphCommandInterface::class, function () use ($className, $parameter) {
+            return (new $className)
+                ->setBot($this->bot)
+                ->setChat($this->chat)
+                ->handleCommand($parameter);
+        });
+        app()->make(TelegraphCommandInterface::class);
+
+
     }
 
     protected function listAllCommands(): void
@@ -42,3 +52,4 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
 
 }
+
