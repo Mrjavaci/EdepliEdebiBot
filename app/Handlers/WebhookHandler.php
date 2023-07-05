@@ -76,7 +76,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
     public function sendButtons($title, array $buttons): void
     {
         $this->chat->html($title)
-            ->keyboard(Keyboard::make()->buttons($buttons))->setChatMenuButton()->send();
+            ->keyboard(Keyboard::make()->buttons($buttons))->send();
 
     }
 

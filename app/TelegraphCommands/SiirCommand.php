@@ -24,7 +24,7 @@ class SiirCommand implements \App\Interfaces\TelegraphCommandInterface
     {
         $poem = Poems::query()->inRandomOrder()->limit(1)->first();
         $this->telegraphChat->html('Senin İçin Seçtiğimiz Şiir; <b>' . $poem->header . '</b>')->send();
-        $this->telegraphChat->html($poem->body)->send();
+        $this->telegraphChat->html(strip_tags($poem->body))->send();
         $this->telegraphChat->html('<b>-</b>' . $poem->poet)->send();
     }
 }
