@@ -28,7 +28,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
     public function handleCustomCommand(string $name, $parameter): void
     {
         $className = '\\App\\TelegraphCommands\\' . \Illuminate\Support\Str::studly($name . 'Command');
-
+        Log::info($className);
         if (!class_exists($className)) {
 
             $this->listAllCommands();
@@ -82,7 +82,6 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 
     protected function handleUnknownCommand(Stringable $text): void
     {
-        Log::info('handleUnknownCommand');
         $this->handleCustomCommand((string)$text->after('/')->before(' ')->before('@'), (string)$text->after('@')->after(' '));
     }
 
