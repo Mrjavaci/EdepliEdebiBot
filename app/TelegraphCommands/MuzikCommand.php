@@ -22,6 +22,6 @@ class MuzikCommand implements \App\Interfaces\TelegraphCommandInterface
 
     public function handleCommand(mixed $arguments = null): void
     {
-        $this->telegraphChat->html(sprintf("Senin İçin Seçtiğimiz Musiki Eser;<br><b>%s</b>", Songs::query()->inRandomOrder()->limit(1)->first()->name))->send();
+        $this->telegraphChat->html(sprintf("Senin İçin Seçtiğimiz Musiki Eser;<b>%s</b>", Songs::query()->inRandomOrder()->limit(1)->first()->name))->send();
     }
 }
