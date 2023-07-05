@@ -11,15 +11,15 @@ use Illuminate\Support\Stringable;
 
 class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
 {
-    public function handleUnknownCommandForTesting(Stringable $text): void
-    {
-        $this->handleUnknownCommand($text);
-    }
+    const ACTION_KEY = 'act';
 
-    protected function handleUnknownCommand(Stringable $text): void
+    /**
+     * should be equal self::ACTION_KEY
+     * @return void
+     */
+    public function act()
     {
-        Log::info('handleUnknownCommand');
-        $this->handleCustomCommand((string)$text->after('/')->before(' ')->before('@'), (string)$text->after('@')->after(' '));
+        $this->handleCustomCommand($this->data->get('command'), null);
     }
 
     public function handleCustomCommand(string $name, $parameter): void
@@ -52,22 +52,28 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
             $className = '\\App\\TelegraphCommands\\' . explode('.', $fileName)[0];
             $description = $className::getDescription();
             $command = '/' . lcfirst(explode('Command', $fileName)[0]);
-            return Button::make($command . '\n' . $description)
-                ->action(lcfirst(explode('Command', $fileName)[0]));
+            return Button::make($command . ' - ' . $description)
+                ->action(self::ACTION_KEY)
+                ->param('command', lcfirst(explode('Command', $fileName)[0]));
         })->toArray();
 
-        $this->sendButtons('<b>Bahsi Geçen Komut Bulunamamıştır. Örnek komutlar aşağıdadır.</b>',$buttons);
-
+        $this->sendButtons('<b>Bahsi Geçen Komut Bulunamamıştır. Örnek komutlar aşağıdadır.</b>', $buttons);
     }
 
     /**
      * @param array $buttons
      * @return void
      */
-    public function sendButtons($title,array $buttons): void
+    public function sendButtons($title, array $buttons): void
     {
         $this->chat->html($title)
             ->keyboard(Keyboard::make()->buttons($buttons))->send();
+    }
+
+    protected function handleUnknownCommand(Stringable $text): void
+    {
+        Log::info('handleUnknownCommand');
+        $this->handleCustomCommand((string)$text->after('/')->before(' ')->before('@'), (string)$text->after('@')->after(' '));
     }
 
     protected function sendHtml(string $message)
