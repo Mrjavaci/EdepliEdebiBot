@@ -33,11 +33,17 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         }
 
         app()->bind(TelegraphCommandInterface::class, function () use ($className, $parameter) {
-            return (new $className)
-                ->setBot($this->bot)
-                ->setChat($this->chat)
-                ->setHandler($this)
-                ->handleCommand($parameter);
+            $instance = (new $className);
+            if (method_exists($instance, 'setBot')) {
+                $instance->setBot($this->bot);
+            }
+            if (method_exists($instance, 'setChat')) {
+                $instance->setChat($this->chat);
+            }
+            if (method_exists($instance, 'setHandler')) {
+                $instance->setHandler($this);
+            }
+            return $instance->handleCommand($parameter);
         });
 
         app()->make(TelegraphCommandInterface::class);
