@@ -24,13 +24,13 @@ class KelimeCommand implements \App\Interfaces\TelegraphCommandInterface
     {
         $word = Words::query()->inRandomOrder()->limit(1)->first();
         $this->telegraphChat->html(sprintf("Senin İçin Seçtiğimiz Kelime <b>%s</b>", $word->word))->send();
-        if ($word->history) {
+        if (!empty($word->history)) {
             $this->telegraphChat->html('Tarihçe: ' . $word->history)->send();
         }
-        if ($word->origin) {
+        if (!empty($word->origin)) {
             $this->telegraphChat->html('Köken: ' . $word->origin)->send();
         }
-        if ($word->annotation) {
+        if (!empty($word->annotation)) {
             $this->telegraphChat->html('Ek Açıklama: ' . $word->annotation)->send();
         }
 
