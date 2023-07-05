@@ -19,6 +19,9 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
      */
     public function act()
     {
+        if (!$this->data->get('command')) {
+            return;
+        }
         $this->handleCustomCommand($this->data->get('command'), null);
     }
 
