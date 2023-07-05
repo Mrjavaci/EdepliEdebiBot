@@ -3,7 +3,10 @@
 namespace App\Handlers;
 
 use App\Interfaces\TelegraphCommandInterface;
+use DefStudio\Telegraph\Keyboard\Button;
+use DefStudio\Telegraph\Keyboard\Keyboard;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Stringable;
 
 class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
@@ -33,16 +36,38 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
             return (new $className)
                 ->setBot($this->bot)
                 ->setChat($this->chat)
+                ->setHandler($this)
                 ->handleCommand($parameter);
         });
-        app()->make(TelegraphCommandInterface::class);
 
+        app()->make(TelegraphCommandInterface::class);
+    }
+
+    public function listAllCommands(): void
+    {
+        $buttons = collect(Storage::disk('commands')->allFiles())->map(function (string $fileName) {
+            /**
+             * @var $className TelegraphCommandInterface
+             */
+            $className = '\\App\\TelegraphCommands\\' . explode('.', $fileName)[0];
+            $description = $className::getDescription();
+            $command = '/' . lcfirst(explode('Command', $fileName)[0]);
+            return Button::make($command . '\n' . $description)
+                ->action(lcfirst(explode('Command', $fileName)[0]));
+        })->toArray();
+
+        $this->sendButtons('<b>Bahsi Geçen Komut Bulunamamıştır. Örnek komutlar aşağıdadır.</b>',$buttons);
 
     }
 
-    protected function listAllCommands(): void
+    /**
+     * @param array $buttons
+     * @return void
+     */
+    public function sendButtons($title,array $buttons): void
     {
-        $this->sendHtml('<b>Bahsi Geçen Komut Bulunamamıştır. Örnek komutlar aşağıdadır.</b>');
+        $this->chat->html($title)
+            ->keyboard(Keyboard::make()->buttons($buttons))->send();
     }
 
     protected function sendHtml(string $message)
