@@ -5,6 +5,7 @@ namespace App\Handlers;
 use App\Interfaces\TelegraphCommandInterface;
 use DefStudio\Telegraph\Keyboard\Button;
 use DefStudio\Telegraph\Keyboard\Keyboard;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Stringable;
@@ -78,6 +79,11 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         $this->chat->html($title)
             ->keyboard(Keyboard::make()->buttons($buttons))->send();
 
+    }
+
+    public function getData(): Collection
+    {
+        return $this->data;
     }
 
     protected function handleUnknownCommand(Stringable $text): void
