@@ -91,7 +91,7 @@ class WebhookHandler extends \DefStudio\Telegraph\Handlers\WebhookHandler
         $this->handleCustomCommand((string)$text->after('/')->before(' ')->before('@'), (string)$text->after('@')->after(' '));
     }
 
-    protected function sendHtml(string $message)
+    public function sendHtml(string $message)
     {
         $this->chat->html($message)->send();
     }
