@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use DefStudio\Telegraph\Exceptions\TelegramWebhookException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -17,6 +18,9 @@ class Handler extends ExceptionHandler
         'password',
         'password_confirmation',
     ];
+    protected $dontReport = [
+        TelegramWebhookException::class
+    ];
 
     /**
      * Register the exception handling callbacks for the application.
@@ -26,5 +30,6 @@ class Handler extends ExceptionHandler
         $this->reportable(function (Throwable $e) {
             //
         });
+
     }
 }
