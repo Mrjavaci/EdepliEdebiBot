@@ -4,6 +4,7 @@ namespace App\TelegraphCommands;
 
 use App\Models\Words;
 use DefStudio\Telegraph\Models\TelegraphChat;
+use Illuminate\Support\Facades\Log;
 
 class KelimeCommand implements \App\Interfaces\TelegraphCommandInterface
 {
@@ -35,8 +36,12 @@ class KelimeCommand implements \App\Interfaces\TelegraphCommandInterface
         $this->sendWord($word);
     }
 
-    protected function sendWord(\Illuminate\Database\Eloquent\Builder $word): void
+    protected function sendWord($word): void
     {
+        if (count($word) === 0) {
+            $this->telegraphChat->html('Aranılan kelime bulunamamıştır.')->send();
+            return;
+        }
         $this->telegraphChat->html(sprintf("Senin İçin Seçtiğimiz Kelime <b>%s</b>", $word->word))->send();
         if (!empty($word->history)) {
             $this->telegraphChat->html('Tarihçe: ' . strip_tags($word->history))->send();
@@ -51,7 +56,8 @@ class KelimeCommand implements \App\Interfaces\TelegraphCommandInterface
 
     protected function searchWord(mixed $arguments)
     {
-        $word = Words::query()->where('word', 'LIKE', '%' . $arguments . '%');
+        Log::debug('arguments' . $arguments);
+        $word = Words::query()->where('word', 'LIKE', '%' . $arguments . '%')->get();
         $this->sendWord($word);
     }
 }
