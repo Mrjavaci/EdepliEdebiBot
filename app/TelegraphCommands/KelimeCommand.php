@@ -67,6 +67,8 @@ class KelimeCommand implements \App\Interfaces\TelegraphCommandInterface
         if (!empty($word->annotation)) {
             $this->telegraphChat->html('Ek Açıklama: ' . strip_tags($word->annotation))->send();
         }
+        $this->telegraphChat->html('Kelime aramak için "/kelime kelimeadi" olarak kullanabilirsiniz.')->send();
+
 //        if ($allWords->count() > 1) {
 //            $this->telegraphChat->html('Bulunan diğer kelimeleri "/kelime kelimeadi" olarak aratabilirsiniz. bulunan diğer kelimeler, ' . $allWords->map(fn($word) => $word->word)->join(', '))->send();
 //        }
