@@ -4,10 +4,12 @@ namespace App\TelegraphCommands;
 
 use App\Models\Words;
 use DefStudio\Telegraph\Models\TelegraphChat;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 class KelimeCommand implements \App\Interfaces\TelegraphCommandInterface
 {
+    protected $arguments = null;
     private TelegraphChat $telegraphChat;
 
     public static function getDescription()
@@ -23,8 +25,10 @@ class KelimeCommand implements \App\Interfaces\TelegraphCommandInterface
 
     public function handleCommand(mixed $arguments = null): void
     {
-        if (is_null($arguments)) {
+        $this->arguments = $arguments;
+        if (is_null($arguments) || $arguments === '/kelime') {
             $this->sendRandomWord();
+            return;
         }
 
         $this->searchWord($arguments);
@@ -36,13 +40,24 @@ class KelimeCommand implements \App\Interfaces\TelegraphCommandInterface
         $this->sendWord($word);
     }
 
-    protected function sendWord($word): void
+    protected function sendWord(Words|Collection|null $word): void
     {
-        if (count($word) === 0) {
+        if (is_null($word) || $word->count() === 0) {
             $this->telegraphChat->html('Aranılan kelime bulunamamıştır.')->send();
             return;
         }
-        $this->telegraphChat->html(sprintf("Senin İçin Seçtiğimiz Kelime <b>%s</b>", $word->word))->send();
+        $allWords = $word;
+        $word = $word->count() === 1 ? $word->first() : $word;
+        try {
+            if ($this->arguments === '/kelime') {
+                $this->telegraphChat->html(sprintf("Senin İçin Rastgele Bulduğumuz Kelime <b>%s</b>", $word->word))->send();
+            } else {
+                $this->telegraphChat->html(sprintf("Senin İçin Aradığımız Kelime <b>%s</b>", $word->word))->send();
+            }
+        } catch (\Exception $e) {
+            $this->telegraphChat->html('Aranılan kelime bulunamamıştır.')->send();
+            return;
+        }
         if (!empty($word->history)) {
             $this->telegraphChat->html('Tarihçe: ' . strip_tags($word->history))->send();
         }
@@ -52,12 +67,14 @@ class KelimeCommand implements \App\Interfaces\TelegraphCommandInterface
         if (!empty($word->annotation)) {
             $this->telegraphChat->html('Ek Açıklama: ' . strip_tags($word->annotation))->send();
         }
+//        if ($allWords->count() > 1) {
+//            $this->telegraphChat->html('Bulunan diğer kelimeleri "/kelime kelimeadi" olarak aratabilirsiniz. bulunan diğer kelimeler, ' . $allWords->map(fn($word) => $word->word)->join(', '))->send();
+//        }
     }
 
     protected function searchWord(mixed $arguments)
     {
-        Log::debug('arguments' . $arguments);
-        $word = Words::query()->where('word', 'LIKE', '%' . $arguments . '%')->get();
+        $word = Words::query()->where('word', 'LIKE', '%' . mb_strtolower($arguments) . '%')->get();
         $this->sendWord($word);
     }
 }

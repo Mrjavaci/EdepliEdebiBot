@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Ignores extends Model
 {
     use HasFactory;
+    protected $table = 'ignore';
+    protected $guarded = [];
 }

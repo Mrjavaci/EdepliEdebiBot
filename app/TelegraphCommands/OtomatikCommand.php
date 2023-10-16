@@ -7,6 +7,7 @@ use App\Interfaces\TelegraphCommandInterface;
 use App\Models\Ignores;
 use DefStudio\Telegraph\Keyboard\Button;
 use DefStudio\Telegraph\Models\TelegraphChat;
+use Illuminate\Support\Facades\Log;
 
 class OtomatikCommand implements TelegraphCommandInterface
 {
@@ -54,15 +55,22 @@ class OtomatikCommand implements TelegraphCommandInterface
     protected function sendActiveOrPassiveCommands()
     {
         $activeButton = Button::make('Aktif')
-            ->action('otomatik')
+            ->action('act')
+            ->param('command', 'otomatik')
             ->param('status', 'on');
         $passiveButton = Button::make('Pasif')
-            ->action('otomatik')
+            ->action('act')
+            ->param('command', 'otomatik')
             ->param('status', 'off');
 
         $this->webhookHandler->sendButtons('Otomatik mesaj gönderim seçimi yapınız.', [
             $activeButton,
             $passiveButton
         ]);
+    }
+
+    public function otomatik($arguments = null)
+    {
+        Log::debug('otomatik function');
     }
 }
